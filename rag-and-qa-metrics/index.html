@@ -12,10 +12,13 @@
 	<link rel="stylesheet" href="dist/theme/night.css">
 	<!-- Bootstrap CSS -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="dist/styles.css">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body>
@@ -68,19 +71,29 @@
 			</section>
 
 			<section>
-				<p>Retrieval - Step 1</p>
+				<p>Retrieval Step 1: Embedding</p>
 				<ul>
 					<li>Embed all KB topics ahead of time</li>
 					<li>Store embeddings in a vector db (we use RedisDB)</li>
 				</ul>
-				<video autoplay muted data-preview-video src="./assets/vids/TopicEmbedding.webm">
+				<video controls muted data-preview-video src="./assets/vids/TopicEmbedding.webm">
+
+				</video>
+			</section>
+			<section>
+				<p>Retrieval Step 2: Cosine Distance</p>
+				<video controls muted data-preview-video src="./assets/vids/CosineDistanceScene.webm">
 
 				</video>
 			</section>
 
 			<section>
-				<h2>How it Works Under the Hood: Part 2</h2>
-				<div id="embeddingPlot2" style="width: 800px; height: 600px;"></div>
+				<p>Retrieval Step 3: Find closest topic(s) under threshold</p>
+				<aside class="notes">
+					<p>Vectors can be visualised in N-dimensional space</p>
+				</aside>
+				<div id="embeddingPlot2" class="w-100 h-100 d-flex justify-content-center align-items-center"
+					style="height: 600px;"></div>
 				<script>
 					const origin2 = { x: 0, y: 0, z: 0 };
 
@@ -103,7 +116,7 @@
 						},
 						{
 							name: "Topic: 'ada-the-bengal-cat'",
-							x: 0.8, y: 0.3, z: 0.9,
+							x: 0.2, y: 0.3, z: 0.6,
 							colour: 'green'
 						}
 					];
@@ -154,24 +167,34 @@
 
 					const vectorTraces2 = vectors2.map(v => ({
 						type: 'scatter3d',
-						mode: 'lines+text',
-						x: [origin2.x, v.x],
-						y: [origin2.y, v.y],
-						z: [origin2.z, v.z],
-						text: [null, v.name],
+						mode: 'markers+text',
+						x: [v.x],
+						y: [v.y],
+						z: [v.z],
+						text: [v.name],
 						textposition: 'top center',
-						line: {
-							width: 6,
-							color: v.colour
-						},
 						marker: {
-							size: 3
+							size: 8,
+							color: v.colour
 						}
 					}));
 
 					const layout2 = {
 						title: 'Cosine Distance Between Utterance and Topics',
+						paper_bgcolor: 'rgba(0,0,0,0)',
+						plot_bgcolor: 'rgba(0,0,0,0)',
+						font: {
+							color: 'white'
+						},
+						showlegend: false,
+						margin: {
+							l: 0,
+							r: 0,
+							t: 50,
+							b: 0
+						},
 						scene: {
+							bgcolor: 'black',
 							xaxis: {
 								title: '',
 								showgrid: false,
@@ -196,7 +219,7 @@
 						},
 						updatemenus: [{
 							type: 'buttons',
-							showactive: true,
+							showactive: false,
 							buttons: [
 								{
 									label: 'Show Axes',
@@ -246,7 +269,7 @@
 									args: [null, {
 										mode: 'immediate',
 										frame: { duration: 1, redraw: true },
-										transition: { duration: 1 }
+										transition: { duration: 3 }
 									}]
 								}
 							]
@@ -259,33 +282,59 @@
 						Plotly.addFrames('embeddingPlot2', frames2);
 					});
 				</script>
-				<p>Lower score = more similar (0 = identical)</p>
+				<p>New user_input: <code>"Ada is adorable"</code></p>
 			</section>
 
 			<section>
-				<h2>How Metrics Are Written (Part 3)</h2>
-				<pre><code class="language-text" data-trim data-noescape>U: Why is Ada the best cat in the whole world?
-S: Because of her cute face and her adorable personality</code></pre>
+				<p>Write QA metric based on retrieved topics for turn</p>
+				<div>
+					<img src="./assets/imgs/qa_metrics.png" alt="QA Metric" data-preview-image>
+				</div>
+			</section>
+			<section>
+				<div class="container-fluid">
+					<div class="row align-items-center">
+						<div class="col-5">
+							<p class="mb-0">1. Get set of topics for user input</p>
+						</div>
+						<div class="col-7">
+							<pre class="mb-0" data-trim data-noescape><code>user_topics = {
+	("ada-cat", 0.2), 
+	("ada-lovelace", 0.25)
+}</code></pre>
+						</div>
+						<div class="row">
+							<div class="col">
+								<p>NOTE: if NO user topics -> no QA metric written</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="row align-items-center fragment fade-in">
+						<div class="col-5">
+							<p class="mb-0">2. Get set of topics for agent response</p>
+						</div>
+						<div class="col-7">
+							<pre class="mb-0" data-trim data-noescape><code>user_topics = {
+	("ada-cat", 0.02), 
+	("ada-lovelace", 0.33)
+}</code></pre>
+						</div>
+					</div>
+					<div class="row align-items-center fragment fade-in">
+						<div class="col-5">
+							<p class="mb-0">3. Write closest single topic from either set</p>
+						</div>
+						<div class="col-7">
+							<pre class="mb-0" data-trim data-noescape><code>topic_written = "ada-cat"</code></pre>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section>
+				<p>Methods to optimise QA metrics</p>
 				<ol>
-					<li class="fragment">Retrieve closest topic for user's input (if score < threshold) <ul
-							class="fragment">
-					<li>(ada-the-bengal-cat, 0.11)</li>
-					<li>(cat-breeds-general, 0.44)</li>
-					<li>(ada-lovelace, 0.68)</li>
-					</ul>
-					</li>
-					<li class="fragment">Retrieve closest topic for agent's response (if score < threshold) <ul
-							class="fragment">
-					<li>(cat-personality-traits, 0.29)</li>
-					<li>(cat-cuteness, 0.33)</li>
-					<li>(ada-lovelace, 0.77)</li>
-					</ul>
-					</li>
-					<li class="fragment">Write QA metric based on retrieved topic
-						<ul class="fragment">
-							<li>Topic: ada-the-bengal-cat → QA metric written</li>
-						</ul>
-					</li>
+					<li>Default </li>
 				</ol>
 			</section>
 		</div>
