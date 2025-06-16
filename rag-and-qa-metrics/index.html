@@ -2,361 +2,366 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title>reveal.js</title>
+    <title>reveal.js</title>
 
-	<link rel="stylesheet" href="dist/reset.css">
-	<link rel="stylesheet" href="dist/reveal.css">
-	<link rel="stylesheet" href="dist/theme/night.css">
-	<!-- Bootstrap CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/night.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="dist/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="dist/styles.css">
 
-	<!-- Theme used for syntax highlighted code -->
-	<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body>
-	<div class="reveal">
-		<div class="slides">
-			<section>
-				<h1>RAG and QA Metrics</h1>
-				<p>How PolyAI uses Retrieval-Augmented Generation</p>
-			</section>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <h1>RAG and QA Metrics</h1>
+                <p>How PolyAI uses Retrieval-Augmented Generation</p>
+            </section>
 
-			<section>
-				<aside class="notes">
-					<p>Show the direct query example - show how LLM makes a guess</p>
-					<p>Then show how RAG provides context first</p>
-					<p>Emphasize that this is a simple example, but the same principle applies to complex queries</p>
-					<p>Mention that this is why we use RAG in Agent Studio - to provide relevant KB topics</p>
-				</aside>
+            <section>
+                <aside class="notes">
+                    <p>Show the direct query example - show how LLM makes a guess</p>
+                    <p>Then show how RAG provides context first</p>
+                    <p>Emphasize that this is a simple example, but the same principle applies to complex queries</p>
+                    <p>Mention that this is why we use RAG in Agent Studio - to provide relevant KB topics</p>
+                </aside>
 
-				<h2>Why do we need RAG?</h2>
-				<div class="query-container">
-					<div class="fragment fade-in">
-						<h4 class="text-primary">Direct LLM Query (no context)</h4>
-						<div class="rounded">
-							<pre class="text-light mb-2">User: "What time is it?"</pre>
-							<pre class="fragment fade-in text-light">LLM: "It's 12:42 on June 14 2023..."</pre>
-						</div>
-					</div>
+                <h2>Why do we need RAG?</h2>
+                <div class="query-container">
+                    <div class="fragment fade-in">
+                        <h4 class="text-primary">Direct LLM Query (no context)</h4>
+                        <div class="rounded">
+                            <pre class="text-light mb-2">User: "What time is it?"</pre>
+                            <pre class="fragment fade-in text-light">LLM: "It's 12:42 on June 14 2023..."</pre>
+                        </div>
+                    </div>
 
-					<div class="fragment fade-in">
-						<h4 class="text-success">RAG Query</h4>
-						<div class="rounded">
-							<pre class="text-light mb-2">User: "What time is it?"</pre>
-							<pre
-								class="text-light mb-2 text-wrap">System: "Answer the user's question, given that the current time is 2:30 PM"</pre>
-							<pre class="fragment fade-in text-light">LLM: "The current time is 2:30 PM"</pre>
-						</div>
-					</div>
-				</div>
+                    <div class="fragment fade-in">
+                        <h4 class="text-success">RAG Query</h4>
+                        <div class="rounded">
+                            <pre class="text-light mb-2">User: "What time is it?"</pre>
+                            <pre
+                                class="text-light mb-2 text-wrap">System: "Answer the user's question, given that the current time is 2:30 PM"</pre>
+                            <pre class="fragment fade-in text-light">LLM: "The current time is 2:30 PM"</pre>
+                        </div>
+                    </div>
+                </div>
 
 
-			</section>
+            </section>
 
-			<section>
-				<p>What is <code>Retrieval-Augmented Generation</code>?</p>
-				<ul>
-					<li><strong>Retrieval:</strong> Find relevant content from the knowledge base</li>
-					<li><strong>Generation:</strong> Use that content to augment the prompt</li>
-				</ul>
-				<img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot" data-preview-image>
-			</section>
+            <section>
+                <p>What is <code>Retrieval-Augmented Generation</code>?</p>
+                <ul>
+                    <li><strong>Retrieval:</strong> Find relevant content from the knowledge base</li>
+                    <li><strong>Generation:</strong> Use that content to augment the prompt</li>
+                </ul>
+                <img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot" data-preview-image>
+            </section>
 
-			<section>
-				<p>Retrieval Step 1: Embedding</p>
-				<ul>
-					<li>Embed all KB topics ahead of time</li>
-					<li>Store embeddings in a vector db (we use RedisDB)</li>
-				</ul>
-				<video controls muted data-preview-video src="./assets/vids/TopicEmbedding.webm">
+            <section>
+                <p style="font-size: 0.8em;">Retrieval Step 1: Embedding</p>
+                <ol class="text-xs" style="font-size: 0.7em;">
+                    <li>Embed all KB topics ahead of time</li>
+                    <li>Store embeddings in a vector db (we use RedisDB)</li>
+                </ol>
+                <video controls muted data-preview-video src="./assets/vids/TopicEmbedding.webm">
 
-				</video>
-			</section>
-			<section>
-				<p>Retrieval Step 2: Cosine Distance</p>
-				<video controls muted data-preview-video src="./assets/vids/CosineDistanceScene.webm">
+                </video>
+                <aside class="notes">
+                    <p>Every topic will have at least 1 embedding (topic_name + topic_content)</p>
+                    <p>Plus a separate embedding for each sample_query</p>
+            </section>
+            <section>
+                <p>Retrieval Step 2: Cosine Distance</p>
+                <video controls muted data-preview-video src="./assets/vids/CosineDistanceScene.webm">
 
-				</video>
-			</section>
+                </video>
+            </section>
 
-			<section>
-				<p>Retrieval Step 3: Find closest topic(s) under threshold</p>
-				<aside class="notes">
-					<p>Vectors can be visualised in N-dimensional space</p>
-				</aside>
-				<div id="embeddingPlot2" class="w-100 h-100 d-flex justify-content-center align-items-center"
-					style="height: 600px;"></div>
-				<script>
-					const origin2 = { x: 0, y: 0, z: 0 };
+            <section>
+                <p>Retrieval Step 3: Find closest topic(s) under threshold</p>
+                <aside class="notes">
+                    <p>Vectors can be visualised in N-dimensional space</p>
+                </aside>
+                <div id="embeddingPlot2" class="w-100 h-100 d-flex justify-content-center align-items-center"
+                    style="height: 600px;"></div>
+                <script>
+                    const origin2 = { x: 0, y: 0, z: 0 };
 
-					// Helper function to calculate magnitude
-					function magnitude2(x, y, z) {
-						return Math.sqrt(x * x + y * y + z * z);
-					}
+                    // Helper function to calculate magnitude
+                    function magnitude2(x, y, z) {
+                        return Math.sqrt(x * x + y * y + z * z);
+                    }
 
-					// Original vectors with their magnitudes
-					const rawVectors2 = [
-						{
-							name: "Utterance: 'Ada is adorable'",
-							x: 0.1, y: 0.2, z: 0.3,
-							colour: 'red'
-						},
-						{
-							name: "Topic: 'ada-lovelace'",
-							x: 0.5, y: 0.6, z: 0.1,
-							colour: 'lightgrey'
-						},
-						{
-							name: "Topic: 'ada-the-bengal-cat'",
-							x: 0.2, y: 0.3, z: 0.6,
-							colour: 'green'
-						}
-					];
+                    // Original vectors with their magnitudes
+                    const rawVectors2 = [
+                        {
+                            name: "Utterance: 'Ada is adorable'",
+                            x: 0.1, y: 0.2, z: 0.3,
+                            colour: 'red'
+                        },
+                        {
+                            name: "Topic: 'ada-lovelace'",
+                            x: 0.5, y: 0.6, z: 0.1,
+                            colour: 'lightgrey'
+                        },
+                        {
+                            name: "Topic: 'ada-the-bengal-cat'",
+                            x: 0.2, y: 0.3, z: 0.6,
+                            colour: 'green'
+                        }
+                    ];
 
-					// Create animation frames
-					const frames2 = [];
-					const numFrames2 = 30;
+                    // Create animation frames
+                    const frames2 = [];
+                    const numFrames2 = 30;
 
-					for (let i = 0; i <= numFrames2; i++) {
-						const t = i / numFrames2; // interpolation factor
-						const vectors = rawVectors2.map(v => {
-							const mag = magnitude2(v.x, v.y, v.z);
-							const normalizedX = v.x / mag;
-							const normalizedY = v.y / mag;
-							const normalizedZ = v.z / mag;
+                    for (let i = 0; i <= numFrames2; i++) {
+                        const t = i / numFrames2; // interpolation factor
+                        const vectors = rawVectors2.map(v => {
+                            const mag = magnitude2(v.x, v.y, v.z);
+                            const normalizedX = v.x / mag;
+                            const normalizedY = v.y / mag;
+                            const normalizedZ = v.z / mag;
 
-							return {
-								...v,
-								x: v.x * (1 - t) + normalizedX * t,
-								y: v.y * (1 - t) + normalizedY * t,
-								z: v.z * (1 - t) + normalizedZ * t
-							};
-						});
+                            return {
+                                ...v,
+                                x: v.x * (1 - t) + normalizedX * t,
+                                y: v.y * (1 - t) + normalizedY * t,
+                                z: v.z * (1 - t) + normalizedZ * t
+                            };
+                        });
 
-						frames2.push({
-							name: `frame${i}`,
-							data: vectors.map(v => ({
-								type: 'scatter3d',
-								mode: 'lines+text',
-								x: [origin2.x, v.x],
-								y: [origin2.y, v.y],
-								z: [origin2.z, v.z],
-								text: [null, v.name],
-								textposition: 'top center',
-								line: {
-									width: 6,
-									color: v.colour
-								},
-								marker: {
-									size: 3
-								}
-							}))
-						});
-					}
+                        frames2.push({
+                            name: `frame${i}`,
+                            data: vectors.map(v => ({
+                                type: 'scatter3d',
+                                mode: 'lines+text',
+                                x: [origin2.x, v.x],
+                                y: [origin2.y, v.y],
+                                z: [origin2.z, v.z],
+                                text: [null, v.name],
+                                textposition: 'top center',
+                                line: {
+                                    width: 6,
+                                    color: v.colour
+                                },
+                                marker: {
+                                    size: 3
+                                }
+                            }))
+                        });
+                    }
 
-					// Initial vectors (unnormalized)
-					const vectors2 = rawVectors2;
+                    // Initial vectors (unnormalized)
+                    const vectors2 = rawVectors2;
 
-					const vectorTraces2 = vectors2.map(v => ({
-						type: 'scatter3d',
-						mode: 'markers+text',
-						x: [v.x],
-						y: [v.y],
-						z: [v.z],
-						text: [v.name],
-						textposition: 'top center',
-						marker: {
-							size: 8,
-							color: v.colour
-						}
-					}));
+                    const vectorTraces2 = vectors2.map(v => ({
+                        type: 'scatter3d',
+                        mode: 'markers+text',
+                        x: [v.x],
+                        y: [v.y],
+                        z: [v.z],
+                        text: [v.name],
+                        textposition: 'top center',
+                        marker: {
+                            size: 8,
+                            color: v.colour
+                        }
+                    }));
 
-					const layout2 = {
-						title: 'Cosine Distance Between Utterance and Topics',
-						paper_bgcolor: 'rgba(0,0,0,0)',
-						plot_bgcolor: 'rgba(0,0,0,0)',
-						font: {
-							color: 'white'
-						},
-						showlegend: false,
-						margin: {
-							l: 0,
-							r: 0,
-							t: 50,
-							b: 0
-						},
-						scene: {
-							bgcolor: 'black',
-							xaxis: {
-								title: '',
-								showgrid: false,
-								zeroline: false,
-								showline: false,
-								showticklabels: false
-							},
-							yaxis: {
-								title: '',
-								showgrid: false,
-								zeroline: false,
-								showline: false,
-								showticklabels: false
-							},
-							zaxis: {
-								title: '',
-								showgrid: false,
-								zeroline: false,
-								showline: false,
-								showticklabels: false
-							}
-						},
-						updatemenus: [{
-							type: 'buttons',
-							showactive: false,
-							buttons: [
-								{
-									label: 'Show Axes',
-									method: 'relayout',
-									args: [{
-										'scene.xaxis.showgrid': true,
-										'scene.yaxis.showgrid': true,
-										'scene.zaxis.showgrid': true,
-										'scene.xaxis.zeroline': true,
-										'scene.yaxis.zeroline': true,
-										'scene.zaxis.zeroline': true,
-										'scene.xaxis.showline': true,
-										'scene.yaxis.showline': true,
-										'scene.zaxis.showline': true,
-										'scene.xaxis.showticklabels': true,
-										'scene.yaxis.showticklabels': true,
-										'scene.zaxis.showticklabels': true,
-										'scene.xaxis.title.text': 'X',
-										'scene.yaxis.title.text': 'Y',
-										'scene.zaxis.title.text': 'Z'
-									}]
-								},
-								{
-									label: 'Hide Axes',
-									method: 'relayout',
-									args: [{
-										'scene.xaxis.showgrid': false,
-										'scene.yaxis.showgrid': false,
-										'scene.zaxis.showgrid': false,
-										'scene.xaxis.zeroline': false,
-										'scene.yaxis.zeroline': false,
-										'scene.zaxis.zeroline': false,
-										'scene.xaxis.showline': false,
-										'scene.yaxis.showline': false,
-										'scene.zaxis.showline': false,
-										'scene.xaxis.showticklabels': false,
-										'scene.yaxis.showticklabels': false,
-										'scene.zaxis.showticklabels': false,
-										'scene.xaxis.title.text': '',
-										'scene.yaxis.title.text': '',
-										'scene.zaxis.title.text': ''
-									}]
-								},
-								{
-									label: 'Animate Normalization',
-									method: 'animate',
-									args: [null, {
-										mode: 'immediate',
-										frame: { duration: 1, redraw: true },
-										transition: { duration: 3 }
-									}]
-								}
-							]
-						}]
-					};
+                    const layout2 = {
+                        title: 'Cosine Distance Between Utterance and Topics',
+                        paper_bgcolor: 'rgba(0,0,0,0)',
+                        plot_bgcolor: 'rgba(0,0,0,0)',
+                        font: {
+                            color: 'white'
+                        },
+                        showlegend: false,
+                        margin: {
+                            l: 0,
+                            r: 0,
+                            t: 50,
+                            b: 0
+                        },
+                        scene: {
+                            bgcolor: 'black',
+                            xaxis: {
+                                title: '',
+                                showgrid: false,
+                                zeroline: false,
+                                showline: false,
+                                showticklabels: false
+                            },
+                            yaxis: {
+                                title: '',
+                                showgrid: false,
+                                zeroline: false,
+                                showline: false,
+                                showticklabels: false
+                            },
+                            zaxis: {
+                                title: '',
+                                showgrid: false,
+                                zeroline: false,
+                                showline: false,
+                                showticklabels: false
+                            }
+                        },
+                        updatemenus: [{
+                            type: 'buttons',
+                            showactive: false,
+                            buttons: [
+                                {
+                                    label: 'Show Axes',
+                                    method: 'relayout',
+                                    args: [{
+                                        'scene.xaxis.showgrid': true,
+                                        'scene.yaxis.showgrid': true,
+                                        'scene.zaxis.showgrid': true,
+                                        'scene.xaxis.zeroline': true,
+                                        'scene.yaxis.zeroline': true,
+                                        'scene.zaxis.zeroline': true,
+                                        'scene.xaxis.showline': true,
+                                        'scene.yaxis.showline': true,
+                                        'scene.zaxis.showline': true,
+                                        'scene.xaxis.showticklabels': true,
+                                        'scene.yaxis.showticklabels': true,
+                                        'scene.zaxis.showticklabels': true,
+                                        'scene.xaxis.title.text': 'X',
+                                        'scene.yaxis.title.text': 'Y',
+                                        'scene.zaxis.title.text': 'Z'
+                                    }]
+                                },
+                                {
+                                    label: 'Hide Axes',
+                                    method: 'relayout',
+                                    args: [{
+                                        'scene.xaxis.showgrid': false,
+                                        'scene.yaxis.showgrid': false,
+                                        'scene.zaxis.showgrid': false,
+                                        'scene.xaxis.zeroline': false,
+                                        'scene.yaxis.zeroline': false,
+                                        'scene.zaxis.zeroline': false,
+                                        'scene.xaxis.showline': false,
+                                        'scene.yaxis.showline': false,
+                                        'scene.zaxis.showline': false,
+                                        'scene.xaxis.showticklabels': false,
+                                        'scene.yaxis.showticklabels': false,
+                                        'scene.zaxis.showticklabels': false,
+                                        'scene.xaxis.title.text': '',
+                                        'scene.yaxis.title.text': '',
+                                        'scene.zaxis.title.text': ''
+                                    }]
+                                },
+                                {
+                                    label: 'Animate Normalization',
+                                    method: 'animate',
+                                    args: [null, {
+                                        mode: 'immediate',
+                                        frame: { duration: 1, redraw: true },
+                                        transition: { duration: 3 }
+                                    }]
+                                }
+                            ]
+                        }]
+                    };
 
-					// Create the initial plot
-					Plotly.newPlot('embeddingPlot2', vectorTraces2, layout2).then(function () {
-						// Add the frames after the plot is created
-						Plotly.addFrames('embeddingPlot2', frames2);
-					});
-				</script>
-				<p>New user_input: <code>"Ada is adorable"</code></p>
-			</section>
+                    // Create the initial plot
+                    Plotly.newPlot('embeddingPlot2', vectorTraces2, layout2).then(function () {
+                        // Add the frames after the plot is created
+                        Plotly.addFrames('embeddingPlot2', frames2);
+                    });
+                </script>
+                <p>New user_input: <code>"Ada is adorable"</code></p>
+            </section>
 
-			<section>
-				<p>Write QA metric based on retrieved topics for turn</p>
-				<div>
-					<img src="./assets/imgs/qa_metrics.png" alt="QA Metric" data-preview-image>
-				</div>
-			</section>
-			<section>
-				<div class="container-fluid">
-					<div class="row align-items-center">
-						<div class="col-5">
-							<p class="mb-0">1. Get set of topics for user input</p>
-						</div>
-						<div class="col-7">
-							<pre class="mb-0" data-trim data-noescape><code>user_topics = {
-	("ada-cat", 0.2), 
+            <section>
+                <p>Write QA metric based on retrieved topics for turn</p>
+                <div>
+                    <img src="./assets/imgs/qa_metrics.png" alt="QA Metric" data-preview-image>
+                </div>
+            </section>
+            <section>
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-5">
+                            <p class="mb-0">1. Get set of topics for user input</p>
+                        </div>
+                        <div class="col-7">
+                            <pre class="mb-0" data-trim data-noescape><code>user_topics = {
+	("ada-cat", 0.2),
 	("ada-lovelace", 0.25)
 }</code></pre>
-						</div>
-						<div class="row">
-							<div class="col">
-								<p>NOTE: if NO user topics -> no QA metric written</p>
-							</div>
-						</div>
-					</div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p>NOTE: if NO user topics -> no QA metric written</p>
+                            </div>
+                        </div>
+                    </div>
 
-					<div class="row align-items-center fragment fade-in">
-						<div class="col-5">
-							<p class="mb-0">2. Get set of topics for agent response</p>
-						</div>
-						<div class="col-7">
-							<pre class="mb-0" data-trim data-noescape><code>user_topics = {
-	("ada-cat", 0.02), 
+                    <div class="row align-items-center fragment fade-in">
+                        <div class="col-5">
+                            <p class="mb-0">2. Get set of topics for agent response</p>
+                        </div>
+                        <div class="col-7">
+                            <pre class="mb-0" data-trim data-noescape><code>user_topics = {
+	("ada-cat", 0.02),
 	("ada-lovelace", 0.33)
 }</code></pre>
-						</div>
-					</div>
-					<div class="row align-items-center fragment fade-in">
-						<div class="col-5">
-							<p class="mb-0">3. Write closest single topic from either set</p>
-						</div>
-						<div class="col-7">
-							<pre class="mb-0" data-trim data-noescape><code>topic_written = "ada-cat"</code></pre>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section>
-				<p>Methods to optimise QA metrics</p>
-				<ol>
-					<li>Default </li>
-				</ol>
-			</section>
-		</div>
-	</div>
+                        </div>
+                    </div>
+                    <div class="row align-items-center fragment fade-in">
+                        <div class="col-5">
+                            <p class="mb-0">3. Write closest single topic from either set</p>
+                        </div>
+                        <div class="col-7">
+                            <pre class="mb-0" data-trim data-noescape><code>topic_written = "ada-cat"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <p>Methods to optimise QA metrics</p>
+                <ol>
+                    <li>Ensure KB topics are optimised (name and content carry equal weight!)</li>
+                    <li>Add agent response to sample questions to guarantee retrieval</li>
+                    <li>Play with RAG thresholds</li>
+                </ol>
+            </section>
+        </div>
+    </div>
 
-	<script src="dist/reveal.js"></script>
-	<script src="plugin/notes/notes.js"></script>
-	<script src="plugin/markdown/markdown.js"></script>
-	<script src="plugin/highlight/highlight.js"></script>
-	<!-- Bootstrap JS Bundle with Popper -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script>
-		// More info about initialization & config:
-		// - https://revealjs.com/initialization/
-		// - https://revealjs.com/config/
-		Reveal.initialize({
-			hash: true,
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
 
-			// Learn about plugins: https://revealjs.com/plugins/
-			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
-		});
-	</script>
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
 </body>
 
 </html>
