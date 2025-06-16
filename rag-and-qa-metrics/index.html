@@ -10,6 +10,9 @@
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
 	<link rel="stylesheet" href="dist/theme/night.css">
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="dist/styles.css">
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -56,22 +59,19 @@
 			</section>
 
 			<section>
-				<h2>What is RAG?</h2>
-				<p>Retrieval-Augmented Generation = Retrieval + Generation</p>
+				<p>What is <code>Retrieval-Augmented Generation</code>?</p>
 				<ul>
 					<li><strong>Retrieval:</strong> Find relevant content from the knowledge base</li>
 					<li><strong>Generation:</strong> Use that content to augment the prompt</li>
 				</ul>
-				<p>Prompt construction for each turn:</p>
-				<img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot">
+				<img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot" data-preview-image>
 			</section>
 
 			<section>
-				<h2>Retrieval</h2>
+				<p>Retrieval - Step 1</p>
 				<ul>
-					<li>Step 1: Embed all KB topics ahead of time</li>
-					<li>Store embeddings in RedisDB</li>
-					<li>Embedding = vector of numbers representing the content</li>
+					<li>Embed all KB topics ahead of time</li>
+					<li>Store embeddings in a vector db (we use RedisDB)</li>
 				</ul>
 				<video controls>
 					<source src="./embedding_animation.mp4" type="video/mp4">
@@ -94,6 +94,8 @@
 	<script src="plugin/notes/notes.js"></script>
 	<script src="plugin/markdown/markdown.js"></script>
 	<script src="plugin/highlight/highlight.js"></script>
+	<!-- Bootstrap JS Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script>
 		// More info about initialization & config:
 		// - https://revealjs.com/initialization/
