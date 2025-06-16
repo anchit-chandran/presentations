@@ -79,11 +79,213 @@
 			</section>
 
 			<section>
-				<h2>Embedding Structure</h2>
+				<h2>How it Works Under the Hood: Part 2</h2>
+				<div id="embeddingPlot2" style="width: 800px; height: 600px;"></div>
+				<script>
+					const origin2 = { x: 0, y: 0, z: 0 };
+
+					// Helper function to calculate magnitude
+					function magnitude2(x, y, z) {
+						return Math.sqrt(x * x + y * y + z * z);
+					}
+
+					// Original vectors with their magnitudes
+					const rawVectors2 = [
+						{
+							name: "Utterance: 'Ada is adorable'",
+							x: 0.1, y: 0.2, z: 0.3,
+							colour: 'red'
+						},
+						{
+							name: "Topic: 'ada-lovelace'",
+							x: 0.5, y: 0.6, z: 0.1,
+							colour: 'lightgrey'
+						},
+						{
+							name: "Topic: 'ada-the-bengal-cat'",
+							x: 0.8, y: 0.3, z: 0.9,
+							colour: 'green'
+						}
+					];
+
+					// Create animation frames
+					const frames2 = [];
+					const numFrames2 = 30;
+
+					for (let i = 0; i <= numFrames2; i++) {
+						const t = i / numFrames2; // interpolation factor
+						const vectors = rawVectors2.map(v => {
+							const mag = magnitude2(v.x, v.y, v.z);
+							const normalizedX = v.x / mag;
+							const normalizedY = v.y / mag;
+							const normalizedZ = v.z / mag;
+
+							return {
+								...v,
+								x: v.x * (1 - t) + normalizedX * t,
+								y: v.y * (1 - t) + normalizedY * t,
+								z: v.z * (1 - t) + normalizedZ * t
+							};
+						});
+
+						frames2.push({
+							name: `frame${i}`,
+							data: vectors.map(v => ({
+								type: 'scatter3d',
+								mode: 'lines+text',
+								x: [origin2.x, v.x],
+								y: [origin2.y, v.y],
+								z: [origin2.z, v.z],
+								text: [null, v.name],
+								textposition: 'top center',
+								line: {
+									width: 6,
+									color: v.colour
+								},
+								marker: {
+									size: 3
+								}
+							}))
+						});
+					}
+
+					// Initial vectors (unnormalized)
+					const vectors2 = rawVectors2;
+
+					const vectorTraces2 = vectors2.map(v => ({
+						type: 'scatter3d',
+						mode: 'lines+text',
+						x: [origin2.x, v.x],
+						y: [origin2.y, v.y],
+						z: [origin2.z, v.z],
+						text: [null, v.name],
+						textposition: 'top center',
+						line: {
+							width: 6,
+							color: v.colour
+						},
+						marker: {
+							size: 3
+						}
+					}));
+
+					const layout2 = {
+						title: 'Cosine Distance Between Utterance and Topics',
+						scene: {
+							xaxis: {
+								title: '',
+								showgrid: false,
+								zeroline: false,
+								showline: false,
+								showticklabels: false
+							},
+							yaxis: {
+								title: '',
+								showgrid: false,
+								zeroline: false,
+								showline: false,
+								showticklabels: false
+							},
+							zaxis: {
+								title: '',
+								showgrid: false,
+								zeroline: false,
+								showline: false,
+								showticklabels: false
+							}
+						},
+						updatemenus: [{
+							type: 'buttons',
+							showactive: true,
+							buttons: [
+								{
+									label: 'Show Axes',
+									method: 'relayout',
+									args: [{
+										'scene.xaxis.showgrid': true,
+										'scene.yaxis.showgrid': true,
+										'scene.zaxis.showgrid': true,
+										'scene.xaxis.zeroline': true,
+										'scene.yaxis.zeroline': true,
+										'scene.zaxis.zeroline': true,
+										'scene.xaxis.showline': true,
+										'scene.yaxis.showline': true,
+										'scene.zaxis.showline': true,
+										'scene.xaxis.showticklabels': true,
+										'scene.yaxis.showticklabels': true,
+										'scene.zaxis.showticklabels': true,
+										'scene.xaxis.title.text': 'X',
+										'scene.yaxis.title.text': 'Y',
+										'scene.zaxis.title.text': 'Z'
+									}]
+								},
+								{
+									label: 'Hide Axes',
+									method: 'relayout',
+									args: [{
+										'scene.xaxis.showgrid': false,
+										'scene.yaxis.showgrid': false,
+										'scene.zaxis.showgrid': false,
+										'scene.xaxis.zeroline': false,
+										'scene.yaxis.zeroline': false,
+										'scene.zaxis.zeroline': false,
+										'scene.xaxis.showline': false,
+										'scene.yaxis.showline': false,
+										'scene.zaxis.showline': false,
+										'scene.xaxis.showticklabels': false,
+										'scene.yaxis.showticklabels': false,
+										'scene.zaxis.showticklabels': false,
+										'scene.xaxis.title.text': '',
+										'scene.yaxis.title.text': '',
+										'scene.zaxis.title.text': ''
+									}]
+								},
+								{
+									label: 'Animate Normalization',
+									method: 'animate',
+									args: [null, {
+										mode: 'immediate',
+										frame: { duration: 1, redraw: true },
+										transition: { duration: 1 }
+									}]
+								}
+							]
+						}]
+					};
+
+					// Create the initial plot
+					Plotly.newPlot('embeddingPlot2', vectorTraces2, layout2).then(function () {
+						// Add the frames after the plot is created
+						Plotly.addFrames('embeddingPlot2', frames2);
+					});
+				</script>
+				<p>Lower score = more similar (0 = identical)</p>
+			</section>
+
+			<section>
+				<h2>How Metrics Are Written (Part 3)</h2>
+				<pre><code class="language-text" data-trim data-noescape>U: Why is Ada the best cat in the whole world?
+S: Because of her cute face and her adorable personality</code></pre>
 				<ol>
-					<li>Encode topic <code>name</code> and full <code>content</code> separately</li>
-					<li>Combine using <code>np.add</code> (element-wise)</li>
-					<li>Encode each sample question individually for question-time retrieval</li>
+					<li class="fragment">Retrieve closest topic for user's input (if score < threshold) <ul
+							class="fragment">
+					<li>(ada-the-bengal-cat, 0.11)</li>
+					<li>(cat-breeds-general, 0.44)</li>
+					<li>(ada-lovelace, 0.68)</li>
+					</ul>
+					</li>
+					<li class="fragment">Retrieve closest topic for agent's response (if score < threshold) <ul
+							class="fragment">
+					<li>(cat-personality-traits, 0.29)</li>
+					<li>(cat-cuteness, 0.33)</li>
+					<li>(ada-lovelace, 0.77)</li>
+					</ul>
+					</li>
+					<li class="fragment">Write QA metric based on retrieved topic
+						<ul class="fragment">
+							<li>Topic: ada-the-bengal-cat → QA metric written</li>
+						</ul>
+					</li>
 				</ol>
 			</section>
 		</div>
