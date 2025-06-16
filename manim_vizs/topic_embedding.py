@@ -2,7 +2,7 @@ from manim import *
 import numpy as np
 
 
-class TopicEmbedding(Scene):
+class TopicEmbedding(ThreeDScene):
     def construct(self):
         # Topic components
         topic_name = Text("topic_name: 'ada-the-cat'", font_size=30)
@@ -49,12 +49,15 @@ class TopicEmbedding(Scene):
         )
 
         # Show all together
+        arrows_group = VGroup(
+            Arrow(topic_name.get_right(), name_vec_text.get_left()),
+            Arrow(topic_content.get_right(), content_vec_text.get_left()),
+            Arrow(sample_query1.get_right(), query1_vec_text.get_left()),
+            Arrow(sample_query2.get_right(), query2_vec_text.get_left()),
+        )
         self.play(
             AnimationGroup(
-                Create(Arrow(topic_name.get_right(), name_vec_text.get_left())),
-                Create(Arrow(topic_content.get_right(), content_vec_text.get_left())),
-                Create(Arrow(sample_query1.get_right(), query1_vec_text.get_left())),
-                Create(Arrow(sample_query2.get_right(), query2_vec_text.get_left())),
+                Create(arrows_group),
                 Write(embeddings_group),
             )
         )
@@ -71,9 +74,11 @@ class TopicEmbedding(Scene):
         combined_vec_text.move_to(plus_sign.get_center())
 
         # transform topic name and content embeddings into combined embedding
-        self.play(
-            Transform(name_vec_text, combined_vec_text),
-            Transform(content_vec_text, combined_vec_text),
-            Transform(plus_sign, combined_vec_text),
+        new_combined_vec_text = AnimationGroup(
+            ReplacementTransform(name_vec_text, combined_vec_text),
+            ReplacementTransform(content_vec_text, combined_vec_text),
+            ReplacementTransform(plus_sign, combined_vec_text),
         )
-        self.wait(2)
+        self.play(
+            new_combined_vec_text,
+        )
