@@ -1,86 +1,110 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>RAG and QA Metrics - Slide Deck</title>
-    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/white.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/night.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
 </head>
 
 <body>
-    <div class="reveal">
-        <div class="slides">
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h1>RAG and QA Metrics</h1>
+				<p>How PolyAI uses Retrieval-Augmented Generation</p>
+			</section>
 
-            <section>
-                <h1>RAG and QA Metrics</h1>
-                <p>How PolyAI uses Retrieval-Augmented Generation</p>
-            </section>
+			<section>
+				<aside class="notes">
+					<p>Show the direct query example - show how LLM makes a guess</p>
+					<p>Then show how RAG provides context first</p>
+					<p>Emphasize that this is a simple example, but the same principle applies to complex queries</p>
+					<p>Mention that this is why we use RAG in Agent Studio - to provide relevant KB topics</p>
+				</aside>
 
-            <section>
-                <h2>Why do we need RAG?</h2>
-                <ul>
-                    <li>Example: Ask LLM “What time is it?”</li>
-                    <li>LLM guesses – output may be incorrect</li>
-                    <li>Now prepend correct time to prompt – LLM gives correct output</li>
-                    <li>Takeaway: Prepending relevant info improves output</li>
-                    <li>"Hallucination" is a misnomer – all output is generative, but RAG improves relevancy</li>
-                    <li>Agent Studio uses RAG to retrieve and prepend relevant knowledge base topics</li>
-                    <li>We log <code>QuestionAnswer</code> metrics with <code>cited_topics</code> for analytics</li>
-                </ul>
-            </section>
+				<h2>Why do we need RAG?</h2>
+				<div class="query-container">
+					<div class="fragment fade-in">
+						<h4 class="text-primary">Direct LLM Query (no context)</h4>
+						<div class="rounded">
+							<pre class="text-light mb-2">User: "What time is it?"</pre>
+							<pre class="fragment fade-in text-light">LLM: "It's 12:42 on June 14 2023..."</pre>
+						</div>
+					</div>
 
-            <section>
-                <h2>What is RAG?</h2>
-                <p>Retrieval-Augmented Generation = Retrieval + Generation</p>
-                <ul>
-                    <li><strong>Retrieval:</strong> Find relevant content from the knowledge base</li>
-                    <li><strong>Generation:</strong> Use that content to augment the prompt</li>
-                </ul>
-                <p>Prompt construction for each turn:</p>
-                <img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot">
-            </section>
+					<div class="fragment fade-in">
+						<h4 class="text-success">RAG Query</h4>
+						<div class="rounded">
+							<pre class="text-light mb-2">User: "What time is it?"</pre>
+							<pre
+								class="text-light mb-2 text-wrap">System: "Answer the user's question, given that the current time is 2:30 PM"</pre>
+							<pre class="fragment fade-in text-light">LLM: "The current time is 2:30 PM"</pre>
+						</div>
+					</div>
+				</div>
 
-            <section>
-                <h2>Retrieval</h2>
-                <ul>
-                    <li>Step 1: Embed all KB topics ahead of time</li>
-                    <li>Store embeddings in RedisDB</li>
-                    <li>Embedding = vector of numbers representing the content</li>
-                </ul>
-                <video controls>
-                    <source src="./embedding_animation.mp4" type="video/mp4">
-                </video>
-                <p>Example: "Ada is the best" → embedding vector</p>
-            </section>
 
-            <section>
-                <h2>Embedding Structure</h2>
-                <ol>
-                    <li>Encode topic <code>name</code> and full <code>content</code> separately</li>
-                    <li>Combine using <code>np.add</code> (element-wise)</li>
-                    <li>Encode each sample question individually for question-time retrieval</li>
-                </ol>
-            </section>
+			</section>
 
-            <!-- Add additional slides here as needed -->
+			<section>
+				<h2>What is RAG?</h2>
+				<p>Retrieval-Augmented Generation = Retrieval + Generation</p>
+				<ul>
+					<li><strong>Retrieval:</strong> Find relevant content from the knowledge base</li>
+					<li><strong>Generation:</strong> Use that content to augment the prompt</li>
+				</ul>
+				<p>Prompt construction for each turn:</p>
+				<img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot">
+			</section>
 
-        </div>
-    </div>
+			<section>
+				<h2>Retrieval</h2>
+				<ul>
+					<li>Step 1: Embed all KB topics ahead of time</li>
+					<li>Store embeddings in RedisDB</li>
+					<li>Embedding = vector of numbers representing the content</li>
+				</ul>
+				<video controls>
+					<source src="./embedding_animation.mp4" type="video/mp4">
+				</video>
+				<p>Example: "Ada is the best" → embedding vector</p>
+			</section>
 
-    <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
-    <script>
-        Reveal.initialize({
-            hash: true,
-            slideNumber: true,
-            embedded: false,
-            controls: true,
-            progress: true,
-            center: true,
-            width: 960,
-            height: 700
-        });
-    </script>
+			<section>
+				<h2>Embedding Structure</h2>
+				<ol>
+					<li>Encode topic <code>name</code> and full <code>content</code> separately</li>
+					<li>Combine using <code>np.add</code> (element-wise)</li>
+					<li>Encode each sample question individually for question-time retrieval</li>
+				</ol>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+		});
+	</script>
 </body>
 
 </html>
