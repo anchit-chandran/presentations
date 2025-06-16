@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>RAG and QA Metrics - Slide Deck</title>
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/white.css">
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <h1>RAG and QA Metrics</h1>
+                <p>How PolyAI uses Retrieval-Augmented Generation</p>
+            </section>
+
+            <section>
+                <h2>Why do we need RAG?</h2>
+                <ul>
+                    <li>Example: Ask LLM “What time is it?”</li>
+                    <li>LLM guesses – output may be incorrect</li>
+                    <li>Now prepend correct time to prompt – LLM gives correct output</li>
+                    <li>Takeaway: Prepending relevant info improves output</li>
+                    <li>"Hallucination" is a misnomer – all output is generative, but RAG improves relevancy</li>
+                    <li>Agent Studio uses RAG to retrieve and prepend relevant knowledge base topics</li>
+                    <li>We log <code>QuestionAnswer</code> metrics with <code>cited_topics</code> for analytics</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>What is RAG?</h2>
+                <p>Retrieval-Augmented Generation = Retrieval + Generation</p>
+                <ul>
+                    <li><strong>Retrieval:</strong> Find relevant content from the knowledge base</li>
+                    <li><strong>Generation:</strong> Use that content to augment the prompt</li>
+                </ul>
+                <p>Prompt construction for each turn:</p>
+                <img src="./dd_kb_topics_sc.png" alt="Prompt Construction Screenshot">
+            </section>
+
+            <section>
+                <h2>Retrieval</h2>
+                <ul>
+                    <li>Step 1: Embed all KB topics ahead of time</li>
+                    <li>Store embeddings in RedisDB</li>
+                    <li>Embedding = vector of numbers representing the content</li>
+                </ul>
+                <video controls>
+                    <source src="./embedding_animation.mp4" type="video/mp4">
+                </video>
+                <p>Example: "Ada is the best" → embedding vector</p>
+            </section>
+
+            <section>
+                <h2>Embedding Structure</h2>
+                <ol>
+                    <li>Encode topic <code>name</code> and full <code>content</code> separately</li>
+                    <li>Combine using <code>np.add</code> (element-wise)</li>
+                    <li>Encode each sample question individually for question-time retrieval</li>
+                </ol>
+            </section>
+
+            <!-- Add additional slides here as needed -->
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            embedded: false,
+            controls: true,
+            progress: true,
+            center: true,
+            width: 960,
+            height: 700
+        });
+    </script>
+</body>
+
+</html>
