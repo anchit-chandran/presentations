@@ -1,0 +1,29 @@
+.label {
+	top: -1.5em;
+	left: 1em;
+    
+    padding: 0.25em 0.5em;
+    border-radius: 0.25rem;
+    font-size: small;
+    font-weight: 500;
+    display: inline-block;
+    z-index: 100;
+}
+
+.utterance-label {
+    background-color: #D9EE50;
+	color: black;
+}
+
+.topic-label {
+    background-color: #007bff;
+	color: white;
+}
+
+.small-text {
+    font-size: 0.8em;
+}
+
+b {
+	color: #D9EE50;
+}
